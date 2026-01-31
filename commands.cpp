@@ -1,57 +1,23 @@
 #include "commands.hpp"
 #include <limits>
 
-void Commands::start_drag()
+
+void Commands::interact(sf::RenderWindow& window)
 {
-    sf::Vector2i mousePos = sf::Mouse::getPosition();
-
-    std::vector<Particle *> *vec = eng->get_particle(mousePos);
-
-    if (!vec)
-        return;
-
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
     sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+    float radius = fluid_output * 30.0f; 
+    float strength = 30.0f; 
 
-    float minDist = std::numeric_limits<float>::max();
-    Particle *closest = nullptr;
-
-    for (auto &p : *vec)
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        sf::Vector2f diff = p->get_pos() - mousePosF;
-        float distSq = diff.x * diff.x + diff.y * diff.y;
-
-        if (distSq < interactionRadius * interactionRadius && distSq < minDist)
-        {
-            minDist = distSq;
-            closest = p;
-        }
+        eng->applyForce(mousePosF, radius, strength);
     }
-
-    if (closest)
+    
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
     {
-        selectedParticle = closest;
-        isDragging = true;
+        eng->applyForce(mousePosF, radius, -strength);
     }
-}
-
-void Commands::update_drag()
-{
-    if (!isDragging || !selectedParticle)
-        return;
-
-    sf::Vector2i mousePos = sf::Mouse::getPosition();
-    sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-
-    sf::Vector2f direction = mousePosF - selectedParticle->get_pos();
-
-    selectedParticle->set_vel(selectedParticle->get_vel() + direction * dragStiffness * 0.1f);
-    selectedParticle->set_vel(selectedParticle->get_vel() * 0.9f);
-}
-
-void Commands::end_drag()
-{
-    isDragging = false;
-    selectedParticle = nullptr;
 }
 
 void Commands::add_fluid(sf::Vector2i pos)
@@ -74,12 +40,12 @@ void Commands::add_fluid(sf::Vector2i pos)
 
 void Commands::increase_fluid_output()
 {
-    fluid_output += 100;
+    fluid_output += increase;
 }
 
 void Commands::decrease_fluid_output()
 {
     if (fluid_output <= 1)
         return;
-    fluid_output -= 100;
+    fluid_output -= increase;
 }

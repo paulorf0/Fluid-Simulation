@@ -34,7 +34,7 @@ void Engine::step()
 
 int Engine::add_particle(sf::Vector2i pos)
 {
-    if(particles_count >= max_particles)
+    if (particles_count >= max_particles)
         return particles_count;
 
     sf::Vector2f pos_float = sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y));
@@ -46,7 +46,7 @@ int Engine::add_particle(sf::Vector2i pos)
     return particles_count;
 }
 
-std::vector<Particle*> *Engine::get_particle(sf::Vector2i pos)
+std::vector<Particle *> *Engine::get_particle(sf::Vector2i pos)
 {
     int cx = (int)std::floor(pos.x / h);
     int cy = (int)std::floor(pos.y / h);
@@ -60,9 +60,25 @@ std::vector<Particle*> *Engine::get_particle(sf::Vector2i pos)
     return {};
 }
 
-int Engine::get_particles_count()
+void Engine::applyForce(sf::Vector2f pos, float radius, float strength)
 {
-    return particles_count;
+    float rSq = radius * radius;
+
+    for (auto &p : particles)
+    {
+        sf::Vector2f diff = p.get_pos() - pos;
+        float distSq = diff.x * diff.x + diff.y * diff.y;
+
+        if (distSq < rSq && distSq > 0.001f)
+        {
+            float dist = std::sqrt(distSq);
+            sf::Vector2f dir = diff / dist;
+
+            float factor = (1.0f - dist / radius);
+
+            p.set_vel(p.get_vel() + dir * strength * factor);
+        }
+    }
 }
 
 void Engine::applyViscosity()
@@ -306,75 +322,52 @@ void Engine::adjustSpring()
             auto const& [key, spring] = item; 
             return spring.L > h; });
 }
-
 void Engine::resolveCollisions()
 {
     for (auto &body : bodies)
     {
-        body.clearBuffers();
+        // body.save_state(); 
+        // body.integrate_prediction(DT); 
+        body->clearBuffers(); 
 
         for (auto &p : particles)
         {
-            if (body.check_collision(&p))
+            if (body->check_inside(&p)) 
             {
-                sf::Vector2f n = body.normal(&p);
-                sf::Vector2f relative_v = p.get_vel() - body.get_velocity_at(p.get_pos());
+                // sf::Vector2f n = body->normal(&p);
+                // sf::Vector2f relative_v = p.get_vel() - body->get_velocity_at(p.get_pos());
+                // float v_dot_n = dot(relative_v, n);
+                // sf::Vector2f v_normal = v_dot_n * n;
+                // sf::Vector2f v_tan = relative_v - v_normal;
+                // sf::Vector2f I = -(1.0f + e) * v_normal + mi * v_tan;
 
-                float v_dot_n = dot(relative_v, n);
-                if (v_dot_n < 0)
-                {
-                    sf::Vector2f v_normal = v_dot_n * n;
-                    sf::Vector2f v_tan = relative_v - v_normal;
-                    sf::Vector2f I = -(1.0f + e) * v_normal + mi * v_tan;
-
-                    body.applyImpulse(p.get_pos(), -I);
-                    p.set_vel(p.get_vel() + I);
-
-                    body.extractParticle(&p);
-                }
+                // body->add_force_at_pos(-I, p.get_pos()); 
             }
         }
     }
 
-    for (auto &p : particles)
+    for (auto &body : bodies)
     {
-        sf::Vector2f pos = p.get_pos();
-        sf::Vector2f vel = p.get_vel();
-        float r = p.get_radius();
-        bool collided = false;
+        // body->update_physics(DT); 
+    }
+    
+    for (auto &body : bodies)
+    {
+        for (auto &p : particles) 
+        {
+            if (body->check_inside(&p)) 
+            {
+                sf::Vector2f n = body->normal(&p);
+                sf::Vector2f relative_v = p.get_vel() - body->get_velocity_at(p.get_pos());
+                float v_dot_n = dot(relative_v, n);
+                
+                sf::Vector2f v_normal = v_dot_n * n;
+                sf::Vector2f v_tan = relative_v - v_normal;
+                sf::Vector2f I = -(1.0f + e) * v_normal + mi * v_tan;
 
-        if (pos.x < r)
-        {
-            pos.x = r;
-            vel.x *= -wall_restitution;
-            collided = true;
-        }
-        else if (pos.x > width - r)
-        {
-            pos.x = width - r;
-            vel.x *= -wall_restitution;
-            collided = true;
-        }
-
-        if (pos.y < r)
-        {
-            pos.y = r;
-            vel.y *= -wall_restitution;
-            collided = true;
-        }
-        else if (pos.y > height - r)
-        {
-            pos.y = height - r;
-            vel.y *= -wall_restitution;
-            collided = true;
-        }
-
-        p.set_pos(pos);
-        p.set_vel(vel);
-
-        if (collided)
-        {
-            p.set_prev_pos(pos - vel * DT);
+                p.set_vel(p.get_vel() + I);
+                body->extractParticle(&p);
+            }
         }
     }
 }

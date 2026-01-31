@@ -1,5 +1,6 @@
 #include "commands.hpp"
 #include "engine/engine.hpp"
+#include "entities/body/Wall/Wall.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -11,7 +12,21 @@ int main()
     sf::RenderWindow window(sf::VideoMode({static_cast<unsigned int>(width), static_cast<unsigned int>(height)}), "Fluid Simulator");
     window.setFramerateLimit(60);
 
-    Engine *eng = new Engine(10, 10, width, height);
+    float mass = 10;
+    float radius = 10;
+
+    Wall *up = new Wall(0, UP, width, height);
+    Wall *down = new Wall(height, DOWN, width, height);
+    Wall *left = new Wall(0, LEFT, width, height);
+    Wall *right = new Wall(width, RIGHT, width, height);
+
+    Engine *eng = new Engine(mass, radius, width, height);
+
+    eng->add_body(up);
+    eng->add_body(down);
+    eng->add_body(left);
+    eng->add_body(right);
+
     Commands commd(eng);
 
     sf::CircleShape pShape;
@@ -24,16 +39,6 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::C))
-            {
-                commd.start_drag();
-            }
-
-            if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::C))
-            {
-                commd.end_drag();
-            }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::G))
             {
@@ -51,9 +56,7 @@ int main()
             }
         }
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-            commd.update_drag();
-
+        commd.interact(window);
         eng->step();
         window.clear(sf::Color::Black);
 

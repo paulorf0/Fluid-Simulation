@@ -8,10 +8,9 @@
 
 class Body {
 public:
-    Body(sf::Vector2f pos) : pos(pos) {}
+    Body() {}
     virtual ~Body() {} 
 
-    sf::Vector2f get_pos() { return pos; }
     virtual sf::Vector2f normal(Particle* p) = 0;
     virtual sf::Vector2f get_velocity_at(sf::Vector2f pos) = 0;
     virtual void applyImpulse(sf::Vector2f pos, sf::Vector2f I) = 0;
@@ -20,6 +19,4 @@ public:
     virtual void clearBuffers() = 0;
     virtual void extractParticle(Particle* p) = 0;
 protected:
-    sf::Vector2f pos;
-
 };

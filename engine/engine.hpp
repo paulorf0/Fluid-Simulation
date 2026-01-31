@@ -10,11 +10,6 @@
 #include "../entities/particle/particle.hpp"
 #include "../entities/body/body.hpp"
 
-// TODO: Gerar particulas
-// TODO: Gerar pares de molas
-// TODO: Adicionar iteração das particulas com mouse - OK.
-// TODO: Adicionar corpos
-
 typedef struct _Spring_
 {
     Particle *A;
@@ -71,17 +66,20 @@ public:
     Engine(float mass, float radius, float w, float h) : mass(mass), radius(radius), width(w), height(h)
     {
         particles_count = 0;
-        bodies = std::vector<Body>();
+        bodies = std::vector<Body*>();
         max_particles = 10000;
         particles.reserve(max_particles);
     }
 
     void step();
-    int add_particle(sf::Vector2i pos);
-    std::vector<Particle*> *get_particle(sf::Vector2i pos);
+    std::vector<Particle *> *get_particle(sf::Vector2i pos);
     const std::vector<Particle> &getParticles() const { return particles; }
 
-    int get_particles_count();
+    int add_particle(sf::Vector2i pos);
+    void add_body(Body* body) { bodies.push_back(body); };
+
+    void applyForce(sf::Vector2f pos, float radius, float strength);
+    int get_particles_count() const { return particles_count; };
 
 private:
     static constexpr float rho0 = 10.0f; // Densidade de repouso.
@@ -89,24 +87,24 @@ private:
     static constexpr float k = 0.004f; // Rigidez da pressão (Stiffness).
 
     static constexpr float k_near = 0.8f; // Rigidez da densidade próxima
-                                           // Controla a anti-aglomeração (anti-clustering).
+                                          // Controla a anti-aglomeração (anti-clustering).
 
     static constexpr float DT = 1.0f;
-    static constexpr float h = 50.0f; // Raio de interação
+    static constexpr float h = 20.0f; // Raio de interação
                                       // Deve ser maior que o diâmetro da partícula para haver vizinhos suficientes
                                       // Aprox 1.5 a 2x o diametro da particula
 
-    static constexpr float k_spring = 0.0f; // Rigidez da "mola"
+    static constexpr float k_spring = 0.8f; // Rigidez da "mola"
 
-    static constexpr float alpha = 0.3f; // Plasticidade da "mola"
+    static constexpr float alpha = 0.2f; // Plasticidade da "mola"
                                          // Quanto maior, mais rápido o fluido "esquece" sua forma original.
 
     static constexpr float gamma = 0.1f; // Taxa de deformação da "mola"
 
-    static constexpr float sigma = 0.8f; // Viscosidade Linear. Viscosidade do fluído
+    static constexpr float sigma = 0.6f; // Viscosidade Linear. Viscosidade do fluído
 
     static constexpr float beta = 0.0f; // Viscosidade quadrática
-    static constexpr float mi = 0.2f;   // Coeficiente de Fricção. 0 = escorregadio, 1 = aderente
+    static constexpr float mi = 0.9f;   // Coeficiente de Fricção. 0 = escorregadio, 1 = aderente
     static constexpr float e = 0.0f;
 
     static inline const sf::Vector2f GRAVITY{0.f, 0.2f};
@@ -121,9 +119,9 @@ private:
     float width;
     float height;
 
-    std::unordered_map<Cell, std::vector<Particle*>, CellHasher> space;
+    std::unordered_map<Cell, std::vector<Particle *>, CellHasher> space;
     std::vector<Particle> particles;
-    std::vector<Body> bodies;
+    std::vector<Body*> bodies;
     std::unordered_map<EdgeKey, Spring, EdgeHash> springMap;
 
     void applyViscosity();
