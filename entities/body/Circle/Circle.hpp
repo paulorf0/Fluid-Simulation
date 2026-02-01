@@ -11,7 +11,9 @@ public:
     sf::Vector2f normal(Particle* p);
     sf::Vector2f get_velocity_at(sf::Vector2f pos);
 
-    int get_radius();
+    int get_radius() const {return radius;};
+    sf::Vector2f get_center() const {return center;};
+
     bool check_collision(Particle* p);
     bool check_inside(Particle* p); 
     void clearBuffers();

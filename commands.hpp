@@ -14,11 +14,16 @@ class Commands
 public:
     Commands(Engine *eng) : initial_pos(sf::Mouse::getPosition()), eng(eng) {};
 
+    int get_force() const { return force; };
+    int get_fluid_output() const { return fluid_output; };
+
     void interact(sf::RenderWindow &window);
 
     void add_fluid(sf::Vector2i pos);
     void increase_fluid_output();
     void decrease_fluid_output();
+    void increase_force();
+    void decrease_force();
 
 private:
     float dt = 0;
@@ -33,4 +38,5 @@ private:
 
     int fluid_output = 1;
     int increase = 20;
+    int force = 5;
 };

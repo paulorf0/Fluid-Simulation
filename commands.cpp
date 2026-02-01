@@ -1,19 +1,18 @@
 #include "commands.hpp"
 #include <limits>
 
-
-void Commands::interact(sf::RenderWindow& window)
+void Commands::interact(sf::RenderWindow &window)
 {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
     sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-    float radius = fluid_output * 30.0f; 
-    float strength = 30.0f; 
+    float radius = fluid_output * 30.0f;
+    float strength = force;
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
         eng->applyForce(mousePosF, radius, strength);
     }
-    
+
     if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
     {
         eng->applyForce(mousePosF, radius, -strength);
@@ -48,4 +47,16 @@ void Commands::decrease_fluid_output()
     if (fluid_output <= 1)
         return;
     fluid_output -= increase;
+}
+
+void Commands::increase_force()
+{
+    force += 1;
+}
+
+void Commands::decrease_force()
+{
+    if (force == 1)
+        return;
+    force -= 1;
 }

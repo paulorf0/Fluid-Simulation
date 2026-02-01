@@ -1,6 +1,8 @@
 #include "commands.hpp"
 #include "engine/engine.hpp"
 #include "entities/body/Wall/Wall.hpp"
+#include "entities/body/Circle/Circle.hpp"
+#include "entities/body/Rect/Rect.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -20,17 +22,28 @@ int main()
     Wall *left = new Wall(0, LEFT, width, height);
     Wall *right = new Wall(width, RIGHT, width, height);
 
+    Circle *circle = new Circle(sf::Vector2f(width / 2, height / 2), 100);
+    Rect *rect = new Rect(sf::Vector2f(width / 2, height - 40), 40, 150);
+
     Engine *eng = new Engine(mass, radius, width, height);
 
     eng->add_body(up);
     eng->add_body(down);
     eng->add_body(left);
     eng->add_body(right);
+    eng->add_body(circle);
+    eng->add_body(rect);
 
     Commands commd(eng);
 
     sf::CircleShape pShape;
     pShape.setFillColor(sf::Color::Cyan);
+
+    sf::CircleShape circleShape;
+    circleShape.setFillColor(sf::Color::White);
+
+    sf::RectangleShape rectShape;
+    rectShape.setFillColor(sf::Color::White);
 
     while (window.isOpen())
     {
@@ -54,13 +67,20 @@ int main()
             {
                 commd.decrease_fluid_output();
             }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            {
+                commd.increase_force();
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            {
+                commd.decrease_force();
+            }
         }
 
         commd.interact(window);
         eng->step();
         window.clear(sf::Color::Black);
-
-        sf::VertexArray particleSystem(sf::Points, 0);
 
         const auto &particles = eng->getParticles();
         for (const auto &p : particles)
@@ -73,6 +93,19 @@ int main()
             pShape.setPosition(p.get_pos());
             window.draw(pShape);
         }
+        float r_obs = circle->get_radius();
+
+        circleShape.setRadius(r_obs);
+        circleShape.setOrigin(r_obs, r_obs);
+        circleShape.setPosition(circle->get_center());
+        window.draw(circleShape);
+
+        dimension dim = rect->get_dimension();
+        rectShape.setSize(sf::Vector2f(dim.w, dim.h));
+        rectShape.setOrigin(dim.w / 2.0f, dim.h / 2.0f); 
+        rectShape.setPosition(rect->get_center());
+        window.draw(rectShape);
+
         window.display();
     }
 

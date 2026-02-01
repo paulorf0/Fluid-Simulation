@@ -1,10 +1,5 @@
 #include "Circle.hpp"
 
-int Circle::get_radius()
-{
-    return radius;
-}
-
 bool Circle::check_collision(Particle *p)
 {
     sf::Vector2f p_pos = p->get_pos();

@@ -13,7 +13,7 @@ set(SOURCES
     engine/engine.cpp
     entities/particle/particle.cpp
     entities/body/Circle/Circle.cpp
-    entities/body/Circle/Circle.cpp
+    entities/body/Rect/Rect.cpp
     entities/body/Wall/Wall.cpp
 )
 
