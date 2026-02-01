@@ -5,7 +5,7 @@ void Commands::interact(sf::RenderWindow &window)
 {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
     sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-    float radius = fluid_output * 30.0f;
+    float radius = 30.0f;
     float strength = force;
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -24,7 +24,7 @@ void Commands::add_fluid(sf::Vector2i pos)
     static std::random_device rd;
     static std::mt19937 gen(rd());
 
-    float radius = 60.0f;
+    float radius = 80.0f;
     std::uniform_real_distribution<float> dist(-radius, radius);
 
     for (int i = 0; i < fluid_output; i++)

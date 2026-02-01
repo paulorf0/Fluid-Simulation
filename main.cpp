@@ -31,8 +31,8 @@ int main()
     eng->add_body(down);
     eng->add_body(left);
     eng->add_body(right);
-    eng->add_body(circle);
-    eng->add_body(rect);
+    // eng->add_body(circle);
+    // eng->add_body(rect);
 
     Commands commd(eng);
 
@@ -95,16 +95,16 @@ int main()
         }
         float r_obs = circle->get_radius();
 
-        circleShape.setRadius(r_obs);
-        circleShape.setOrigin(r_obs, r_obs);
-        circleShape.setPosition(circle->get_center());
-        window.draw(circleShape);
+        // circleShape.setRadius(r_obs);
+        // circleShape.setOrigin(r_obs, r_obs);
+        // circleShape.setPosition(circle->get_center());
+        // window.draw(circleShape);
 
-        dimension dim = rect->get_dimension();
-        rectShape.setSize(sf::Vector2f(dim.w, dim.h));
-        rectShape.setOrigin(dim.w / 2.0f, dim.h / 2.0f); 
-        rectShape.setPosition(rect->get_center());
-        window.draw(rectShape);
+        // dimension dim = rect->get_dimension();
+        // rectShape.setSize(sf::Vector2f(dim.w, dim.h));
+        // rectShape.setOrigin(dim.w / 2.0f, dim.h / 2.0f); 
+        // rectShape.setPosition(rect->get_center());
+        // window.draw(rectShape);
 
         window.display();
     }

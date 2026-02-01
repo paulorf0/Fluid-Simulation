@@ -90,13 +90,13 @@ private:
                                           // Controla a anti-aglomeração (anti-clustering).
 
     static constexpr float DT = 1.0f;
-    static constexpr float h = 30.0f; // Raio de interação
+    static constexpr float h = 20.0f; // Raio de interação
                                       // Deve ser maior que o diâmetro da partícula para haver vizinhos suficientes
                                       // Aprox 1.5 a 2x o diametro da particula
 
-    static constexpr float k_spring = 1.f; // Rigidez da "mola"
+    static constexpr float k_spring = 0.9f; // Rigidez da "mola"
 
-    static constexpr float alpha = 0.1f; // Plasticidade da "mola"
+    static constexpr float alpha = 0.6f; // Plasticidade da "mola"
                                          // Quanto maior, mais rápido o fluido "esquece" sua forma original.
 
     static constexpr float gamma = 0.1f; // Taxa de deformação da "mola"
