@@ -23,7 +23,7 @@ int main()
     Wall *right = new Wall(width, RIGHT, width, height);
 
     Circle *circle = new Circle(sf::Vector2f(width / 2, height / 2), 100);
-    Rect *rect = new Rect(sf::Vector2f(width / 2, height - 40), 40, 150);
+    Rect *rect = new Rect(sf::Vector2f(width / 2, height / 2), 40, 150);
 
     Engine *eng = new Engine(mass, radius, width, height);
 
@@ -32,7 +32,7 @@ int main()
     eng->add_body(left);
     eng->add_body(right);
     // eng->add_body(circle);
-    // eng->add_body(rect);
+    eng->add_body(rect);
 
     Commands commd(eng);
 
@@ -100,11 +100,11 @@ int main()
         // circleShape.setPosition(circle->get_center());
         // window.draw(circleShape);
 
-        // dimension dim = rect->get_dimension();
-        // rectShape.setSize(sf::Vector2f(dim.w, dim.h));
-        // rectShape.setOrigin(dim.w / 2.0f, dim.h / 2.0f); 
-        // rectShape.setPosition(rect->get_center());
-        // window.draw(rectShape);
+        dimension dim = rect->get_dimension();
+        rectShape.setSize(sf::Vector2f(dim.w, dim.h));
+        rectShape.setOrigin(dim.w / 2.0f, dim.h / 2.0f);
+        rectShape.setPosition(rect->get_center());
+        window.draw(rectShape);
 
         window.display();
     }
