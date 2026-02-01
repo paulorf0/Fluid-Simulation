@@ -9,8 +9,7 @@ Este projeto explora técnicas de SPH (Smoothed Particle Hydrodynamics) para sim
 ## 📸 Demonstração
 
 ### Simulação Livre
-> *Adicione aqui o seu GIF mostrando a interação com o fluido sem obstáculos.*
-![Simulação Sem Obstáculos](./assets/sim_no_obstacle.mp4)
+![Simulação Sem Obstáculos](./assets/sim_no_obstacle.gif)
 
 <!-- ### Interação com Obstáculos
 > *Adicione aqui o seu GIF mostrando o fluido colidindo com as paredes/objetos.*
